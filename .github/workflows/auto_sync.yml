@@ -1,0 +1,32 @@
+name: Auto Sync Strava & Deploy
+on:
+  schedule:
+    - cron: '0 0 * * *'   # 每天 UTC 0:00 (北京时间早8点)
+  workflow_dispatch:        # 允许手动触发
+jobs:
+  sync-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install -g pnpm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r run_page/requirements.txt
+      - name: Sync Strava
+        env:
+          STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
+          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
+          STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
+        run: python run_page/strava_sync_recent.py
+      - name: Build & Deploy
+        run: |
+          pnpm install
+          pnpm build
+          pnpm deploy
