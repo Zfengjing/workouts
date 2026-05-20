@@ -169,16 +169,23 @@ jobs:
           git commit -m 'Add new workouts' || echo "nothing to commit"
           git push || echo "nothing to push"
 
-  publish_github_pages:
-    if: needs.sync.result == 'success' && vars.BUILD_GH_PAGES != 'false'
-    name: Build and publish Github Pages
+   deploy:
+    name: Deploy to GitHub Pages
+    needs: sync
+    runs-on: ubuntu-latest
+    if: vars.BUILD_GH_PAGES != 'false'
     permissions:
-      contents: read
-      pages: write
-      id-token: write
-    uses: ./.github/workflows/gh-pages.yml
-    with:
-      save_data_in_github_cache: false
-      data_cache_prefix: 'track_data'
-    needs:
-      - sync
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install -g pnpm
+      - name: Build and Deploy
+        run: |
+          pnpm install
+          pnpm build
+          pnpm deploy
