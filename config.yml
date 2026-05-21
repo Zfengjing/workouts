@@ -16,15 +16,15 @@ theme: dark
 
 goals:
   all:
-    yearly: 2500
-    monthly: 150
+    yearly: 3500
+    monthly: 300
     weekly: 35
     unit: distance
 
   Run:
-    yearly: 1200
-    monthly: 100
-    weekly: 25
+    yearly: 2500
+    monthly: 200
+    weekly: 50
     unit: distance
 
   Ride:
@@ -52,5 +52,5 @@ goals:
 githubClientId: 'Ov23liIA4gcZ3hXZkJnP'
 
 # 打卡数据存储位置（当前 repo），格式：username/repo-name
-repoOwner: 'zhaohongxuan'
+repoOwner: 'zfengjing'
 repoName: 'workouts'
