@@ -5,7 +5,7 @@ import yaml from '@modyfi/vite-plugin-yaml'
 import path from 'path'
 
 export default defineConfig({
-  base: process.env.PATH_PREFIX ? `${process.env.PATH_PREFIX}/` : '/',
+  base: '/workouts/',
   plugins: [react(), tailwindcss(), yaml()],
   resolve: {
     alias: {
