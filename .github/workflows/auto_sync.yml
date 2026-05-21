@@ -20,8 +20,8 @@ jobs:
         with:
           node-version: '22'  # 使用最新的 LTS 版本
 
-      - name: Install pnpm
-        run: npm install -g pnpm  # 全局安装，确保后续可用
+      - name: Install pnpm (v8.15.0)
+        run: npm install -g pnpm@8.15.0  # 全局安装，确保后续可用
 
       - name: Setup Python
         uses: actions/setup-python@v6  # 已升级到 v6
