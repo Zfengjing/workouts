@@ -40,6 +40,7 @@ jobs:
 
       - name: Build and Deploy to GitHub Pages
         run: |
-          pnpm install --only-built-dependencies=esbuild
+          echo "only_built_dependencies=esbuild" >> .npmrc
+          pnpm install
           pnpm build
           pnpm deploy
