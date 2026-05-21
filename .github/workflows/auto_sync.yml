@@ -39,8 +39,9 @@ jobs:
         run: python run_page/strava_sync_recent.py $STRAVA_CLIENT_ID $STRAVA_CLIENT_SECRET $STRAVA_REFRESH_TOKEN
 
       - name: Build and Deploy to GitHub Pages
+        env:
+            PNPM_ONLY_BUILT_DEPENDENCIES: esbuild
         run: |
-          echo "only-built-dependencies=esbuild" >> .npmrc
           pnpm install
           pnpm build
           pnpm deploy
