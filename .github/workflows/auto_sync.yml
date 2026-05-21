@@ -1,13 +1,13 @@
 name: Auto Sync & Deploy
 
 on:
-    schedule:
-        - cron: '30 0 * * *'   # UTC 0:30 = 北京时间早上 8:30
-        - cron: '0 13 * * *'   # UTC 13:00 = 北京时间晚上 9:00
+  schedule:
+    - cron: '30 0 * * *'   # UTC 0:30 = 北京时间早上 8:30
+    - cron: '0 13 * * *'   # UTC 13:00 = 北京时间晚上 9:00
   workflow_dispatch:        # 允许手动触发
 
 permissions:
-  contents: write           # 关键：必须授予写入权限，否则无法部署
+  contents: write
 
 jobs:
   sync-and-deploy:
