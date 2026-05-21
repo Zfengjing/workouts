@@ -168,7 +168,8 @@ jobs:
           git add .
           git commit -m 'Add new workouts' || echo "nothing to commit"
           git push || echo "nothing to push"
-   deploy:
+   
+  deploy:
     name: Deploy to GitHub Pages
     needs: sync
     runs-on: ubuntu-latest
