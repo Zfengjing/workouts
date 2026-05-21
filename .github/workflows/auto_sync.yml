@@ -40,6 +40,6 @@ jobs:
 
       - name: Build and Deploy to GitHub Pages
         run: |
-          pnpm install
+          pnpm install --only-built-dependencies=esbuild
           pnpm build
           pnpm deploy
