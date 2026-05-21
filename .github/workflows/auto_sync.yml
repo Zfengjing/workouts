@@ -1,31 +1,44 @@
-name: Auto Sync Strava & Deploy
+name: Auto Sync & Deploy
+
 on:
   schedule:
-    - cron: '0 0 * * *'   # 每天 UTC 0:00 (北京时间早8点)
+    - cron: '0 0 * * *'   # 每天 UTC 0:00 (北京时间上午8点)
   workflow_dispatch:        # 允许手动触发
+
+permissions:
+  contents: write           # 关键：必须授予写入权限，否则无法部署
+
 jobs:
   sync-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v5  # 已升级到 v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5  # 已升级到 v5
         with:
-          node-version: '20'
-      - run: npm install -g pnpm
-      - uses: actions/setup-python@v5
+          node-version: '22'  # 使用最新的 LTS 版本
+
+      - name: Install pnpm
+        run: npm install -g pnpm  # 全局安装，确保后续可用
+
+      - name: Setup Python
+        uses: actions/setup-python@v6  # 已升级到 v6
         with:
-          python-version: '3.11'
-      - name: Install dependencies
+          python-version: '3.12'  # 使用较新的 Python 版本
+
+      - name: Install Python dependencies
         run: pip install -r run_page/requirements.txt
-      - name: Sync Strava
+
+      - name: Sync Strava data
         env:
           STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
           STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
           STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
-        run: python run_page/strava_sync_recent.py
-      - name: Build & Deploy
+        run: python run_page/strava_sync_recent.py $STRAVA_CLIENT_ID $STRAVA_CLIENT_SECRET $STRAVA_REFRESH_TOKEN
+
+      - name: Build and Deploy to GitHub Pages
         run: |
           pnpm install
           pnpm build
