@@ -113,7 +113,7 @@ export default function App() {
           <div className="flex items-center justify-center gap-3">
             <span>&copy; {new Date().getFullYear()} Workout Dashboard.</span>
             <a
-              href="https://github.com/zhaohongxuan/workouts"
+              href="https://github.com/zfengjing/workouts"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1 hover:text-[var(--color-text)] transition-colors"
