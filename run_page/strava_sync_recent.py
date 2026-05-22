@@ -2,9 +2,56 @@ import argparse
 import json
 import os
 import sys
+import time
+
+from geopy.geocoders import Nominatim
 
 from config import JSON_FILE, SQL_FILE
 from generator import Generator
+
+
+def fix_location_country():
+    geolocator = Nominatim(user_agent="workout_dashboard")
+    file_path = JSON_FILE
+
+    if not os.path.exists(file_path):
+        print(f"Warning: {file_path} not found, skip fix.")
+        return
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        activities = json.load(f)
+
+    fixed = 0
+    for act in activities:
+        if act.get("location_country"):
+            continue
+        latlng = act.get("start_latlng")
+        if not latlng or len(latlng) != 2 or latlng[0] is None:
+            continue
+
+        try:
+            location = geolocator.reverse(f"{latlng[0]}, {latlng[1]}", language="zh")
+            address = location.raw.get("address", {})
+            province = (
+                address.get("province")
+                or address.get("state")
+                or address.get("city")
+                or ""
+            )
+            if province:
+                act["location_country"] = province
+                fixed += 1
+                time.sleep(0.1)
+        except Exception as e:
+            print(f"Failed to reverse geocode {latlng}: {e}")
+            continue
+
+    if fixed > 0:
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(activities, f, ensure_ascii=False, indent=0)
+        print(f"Fixed location_country for {fixed} activities.")
+    else:
+        print("No missing location_country to fix.")
 
 
 def run_strava_sync_recent(
@@ -18,6 +65,9 @@ def run_strava_sync_recent(
     activities_list = generator.loadForMapping()
     with open(JSON_FILE, "w") as f:
         json.dump(activities_list, f, indent=0)
+
+    print("Fixing location_country for activities with missing province...")
+    fix_location_country()
 
 
 if __name__ == "__main__":
@@ -54,7 +104,6 @@ if __name__ == "__main__":
     )
     options = parser.parse_args()
 
-    # Resolve credentials: CLI args take priority, then env vars
     client_id = options.client_id or os.getenv("STRAVA_CLIENT_ID")
     client_secret = options.client_secret or os.getenv("STRAVA_CLIENT_SECRET")
     refresh_token = options.refresh_token or os.getenv("STRAVA_REFRESH_TOKEN")
