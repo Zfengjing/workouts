@@ -18,7 +18,7 @@ goals:
   all:
     yearly: 3500
     monthly: 300
-    weekly: 35
+    weekly: 50
     unit: distance
 
   Run:
